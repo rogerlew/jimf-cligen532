@@ -4,7 +4,8 @@
 
 Source and Executables provided by:
 
-Jim Frankenberger, Computer Engineer
+Jim Frankenberger<br>
+Computer Engineer<br>
 USDA-ARS National Soil Erosion Research Laboratory
 
 
