@@ -6,7 +6,13 @@ Source and Executables provided by:
 
 Jim Frankenberger, Computer Engineer
 USDA-ARS National Soil Erosion Research Laboratory
-http://fargo.nserl.purdue.edu/cligen532/
+
+
+> Warning: No effort is made to ensure these resources are up to date. They are
+> provided here solely for Roger's convenience. Please check the following url
+> for updates:
+> http://fargo.nserl.purdue.edu/cligen532/
+
 
 This is the source code along with executables for Windows and Linux for CLIGEN version 5.32. This version has a few updates from the CLIGEN 5.3:
 
