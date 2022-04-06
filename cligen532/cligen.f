@@ -602,7 +602,7 @@ c     + + + OUTPUT FORMATS + + +
  2080 format(/1x,'Do you want to continue (y/n)? ')
 c
 c     + + + END SPECIFICATIONS + + +
-      version=5.32000
+      version=5.3210
 c
 c *************************************************************
 c **************** BEGIN COMPILER-SPECIFIC CODE ***************
@@ -3285,7 +3285,7 @@ c      Option 3 Stuff
         nb=361
         ne=366
         if((iyear-iyear/400*400.eq.0).or.((iyear-iyear/4*4.eq.0)
-     1     .neqv.(iyear-iyear/100*100.eq.0))) r(366)=0.0
+     1     .and..not.(iyear-iyear/100*100.eq.0))) r(366)=0.0
         j=37
         write(8,2120)nstat,iyear,(r(i),i=nb,ne),j
       endif
@@ -3731,7 +3731,7 @@ c ---------- Convert Observed Temps to degrees-C
         if(iopt.eq.4.or.iopt.eq.7) then
           nt=0
           if((iyear-iyear/400*400.eq.0).or.((iyear-iyear/4*4.eq.0)
-     1       .neqv.(iyear-iyear/100*100.eq.0)))  nt=1
+     1       .and.(iyear-iyear/100*100.eq.0)))  nt=1
           ntd1 = jdt(nc,jd,mo,nt)
           nbt = ntd1
           numyr=1
@@ -3745,7 +3745,7 @@ c
           ntd=365
           if((iopt.le.3.or.iopt.eq.5.or.iopt.eq.6) .and.
      1       ((iyear-iyear/400*400.eq.0).or.((iyear-iyear/4*4.eq.0)
-     1        .neqv.(iyear-iyear/100*100.eq.0)))) ntd=366
+     1        .and..not.(iyear-iyear/100*100.eq.0)))) ntd=366
           do 170 i=1,12
             do 169 jk=1,31
               prcip(i,jk)=0.0
