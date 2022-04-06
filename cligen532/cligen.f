@@ -2,7 +2,7 @@ c
 c
 c     Cligen version 5.32.1  04/06/2022  Roger Lew
 c       - Fix for leap years to include years divisible by 400 but not
-          divisible by 100
+c          divisible by 100
 c
 c     Cligen version 5.32  03/14/2013 Jim Frankenberger
 c       - using observed option (type=6) the tpeak variable
@@ -3284,7 +3284,8 @@ c      Option 3 Stuff
  210    continue
         nb=361
         ne=366
-        if ((((iyear-iyear/4*4).eq.0) .and. .not. ((iyear-iyear/100*100).eq.0)) .or. ((iyear-iyear/400*400).eq.0)) r(366)=0.0
+        if((iyear-iyear/400*400.eq.0).or.((iyear-iyear/4*4.eq.0)
+     1     .neqv.(iyear-iyear/100*100.eq.0))) r(366)=0.0
         j=37
         write(8,2120)nstat,iyear,(r(i),i=nb,ne),j
       endif
@@ -3729,7 +3730,8 @@ c ---------- Convert Observed Temps to degrees-C
   
         if(iopt.eq.4.or.iopt.eq.7) then
           nt=0
-          if ((((iyear-iyear/4*4).eq.0) .and. .not. ((iyear-iyear/100*100).eq.0)) .or. ((iyear-iyear/400*400).eq.0)) nt=1
+          if((iyear-iyear/400*400.eq.0).or.((iyear-iyear/4*4.eq.0)
+     1       .neqv.(iyear-iyear/100*100.eq.0)))  nt=1
           ntd1 = jdt(nc,jd,mo,nt)
           nbt = ntd1
           numyr=1
@@ -3742,7 +3744,8 @@ c
           moveto = 0
           ntd=365
           if((iopt.le.3.or.iopt.eq.5.or.iopt.eq.6) .and.
-     1                                   ((((iyear-iyear/4*4).eq.0) .and. .not. ((iyear-iyear/100*100).eq.0)) .or. ((iyear-iyear/400*400).eq.0)) ) ntd=366
+     1       ((iyear-iyear/400*400.eq.0).or.((iyear-iyear/4*4.eq.0)
+     1        .neqv.(iyear-iyear/100*100.eq.0)))) ntd=366
           do 170 i=1,12
             do 169 jk=1,31
               prcip(i,jk)=0.0
