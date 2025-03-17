@@ -29,4 +29,5 @@ Repo contains:
 
 - Prebuilt Windows Executable cligen532.exe
 - Prebuilt Linux Executable cligen532
+- Prebuilt Apple Silicon Executable cligen532.arm64.mac
 - Source Code cligen532.tar.gz

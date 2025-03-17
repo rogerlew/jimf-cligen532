@@ -1,0 +1,29 @@
+#
+# Makefile for cligen532 executable using gfortran on ARM64 macOS
+#
+
+FC        = gfortran
+FFLAGS    = -c -fdefault-real-8 -Wall -O2 -fno-align-commons
+LINKER    = gfortran
+PROGRAM   = cligen532.arm64.mac  # Updated to match your target name
+DEST      = .
+.SUFFIXES: .for .o
+MAKEFILE  = Makefile
+OBJS      = cligen.o
+SRCS      = cligen.f 
+
+# Rule to compile .for files to .o
+.for.o:
+	$(FC) $(FFLAGS) $<
+
+# Link the program
+$(PROGRAM): $(OBJS)
+	$(LINKER) $(OBJS) -o $(PROGRAM)
+
+# Default target
+all: $(PROGRAM)
+
+# Clean up
+clean:
+	rm -f $(OBJS)
+	rm -f $(PROGRAM)
