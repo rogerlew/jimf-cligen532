@@ -2,6 +2,10 @@
 
 FC_GNU       = gfortran
 FFLAGS_GNU   = -c -O0 -g -fcheck=all -Wall -fbacktrace -ffpe-trap=invalid,zero,overflow
+#   -fcheck=all: Enables all runtime checks (bounds, uninit, etc.)
+#   -fbacktrace: Gives you source line info on crash
+#   -ffpe-trap=...: Makes the binary crash immediately on bad floats
+#   -O0: Disables optimization so line numbers match source
 
 LINK_GNU     = gfortran
 LDFLAGS      = -g -fbacktrace
