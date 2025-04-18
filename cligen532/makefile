@@ -1,7 +1,18 @@
-# Makefile for building cligen532 using gfortran with debug and checks
+# makefile for cligen532 with gfortran
+# Compiler
+FC_GNU = gfortran
+FC     = $(FC_GNU)
+LINKER = $(FC_GNU)
 
-FC_GNU       = gfortran
-FFLAGS_GNU = -c -O3 -march=x86-64 -funroll-loops -fno-math-errno -fno-trapping-math -fno-signaling-nans -ffinite-math-only -fno-protect-parens -fno-stack-protector
+# Sources
+SRCS   = cligen.f
+
+# Objects
+OBJS_OPT       = $(SRCS:.f=.o)
+OBJS_BACKTRACE = $(SRCS:.f=.debug.o)
+
+# Flags
+FFLAGS_OPT       = -c -O3 -march=x86-64 -funroll-loops -fno-math-errno -fno-trapping-math -fno-signaling-nans -ffinite-math-only -fno-protect-parens -fno-stack-protector
 #   -O3: Aggressive optimization
 #   -march=x86-64: Don't use CPU-specific instructions
 #   -funroll-loops: Speed-up tight loops
@@ -11,28 +22,28 @@ FFLAGS_GNU = -c -O3 -march=x86-64 -funroll-loops -fno-math-errno -fno-trapping-m
 #   -fno-protect-parens: Allow expression reordering
 #   -fno-stack-protector: Reduces overhead if you’re not worried about buffer overflows
 
-LINK_GNU     = gfortran
-LDFLAGS      = -g -fbacktrace
+FFLAGS_BACKTRACE = -c -g -O0
+#   -g Debuggable, accurate stacktraces
+#   -O0: No optimiation
 
-PROGRAM      = cligen532
-FFLAGS       = $(FFLAGS_GNU)
-FC           = $(FC_GNU)
-LINKER       = $(LINK_GNU)
+# Targets
+all: cligen532 cligen532_backtrace
 
-DEST         = .
-.SUFFIXES: .for .o
-MAKEFILE     = Makefile
-OBJS         = cligen.o
-SRCS         = cligen.f
+cligen532: $(OBJS_OPT)
+	$(LINKER) $(OBJS_OPT) -o cligen532
 
-.for.o:
-	$(FC) $(FFLAGS) $<
+cligen532_backtrace: $(OBJS_BACKTRACE)
+	$(LINKER) -g -fbacktrace $(OBJS_BACKTRACE) -o cligen532_backtrace
 
-$(PROGRAM): $(OBJS) $(LIBS)
-	$(LINKER) $(LDFLAGS) $(OBJS) -o $(PROGRAM)
+# Compile rules
+%.o: %.f
+	$(FC) $(FFLAGS_OPT) $< -o $@
 
-all: $(PROGRAM)
+%.debug.o: %.f
+	$(FC) $(FFLAGS_BACKTRACE) $< -o $@
 
+# Clean up
 clean:
-	rm -f $(OBJS)
-	rm -f $(PROGRAM)
+	rm -f $(OBJS_OPT) $(OBJS_BACKTRACE)
+	rm -f cligen532 cligen532_backtrace
+

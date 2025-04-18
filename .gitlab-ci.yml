@@ -1,0 +1,16 @@
+stages:
+  - build
+
+build_cligen:
+  stage: build
+  image: gcc:latest  # official gcc image with gfortran installed
+  before_script:
+    - apt-get update && apt-get install -y gfortran make
+  script:
+    - cd cligen532
+    - make all
+  artifacts:
+    paths:
+      - cligen532/cligen532
+      - cligen532/cligen532_backtrace
+    expire_in: 1 week
