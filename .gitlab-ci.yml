@@ -14,3 +14,23 @@ build_linux_cligen:
       - cligen532/cligen532
       - cligen532/cligen532_backtrace
     expire_in: 1 week
+
+
+build_linux_windows:
+  stage: build
+  tags:
+    - win11shed-windows-shell-fortran
+  before_script:
+    - call C:\Gitlab-Runner\set_env.bat
+  script:
+    - cd cligen532
+    - make clean
+    - make all
+  artifacts:
+    paths:
+      - cligen532/cligen532
+      - cligen532/cligen532_backtrace
+    expire_in: 1 week
+
+
+    
