@@ -21,7 +21,7 @@ build_linux_windows:
   tags:
     - win11shed-windows-shell-fortran
   script:
-    - pwsh -ExecutionPolicy Bypass -File C:\Gitlab-Runner\set_env.ps1
+    - pwsh -ExecutionPolicy Bypass -File C:\Gitlab-Runner\conda_init.ps1
     - cd cligen532
     - make clean
     - make all
