@@ -21,7 +21,7 @@ build_linux_windows:
   tags:
     - win11shed-windows-shell-fortran
   script:
-    - pwsh -ExecutionPolicy Bypass -File C:\Gitlab-Runner\conda_init.ps1
+    - pwsh -ExecutionPolicy Bypass -NoExit -Command "& 'C:\ProgramData\anaconda3\shell\condabin\conda-hook.ps1'; conda activate 'C:\ProgramData\anaconda3'"
     - cd cligen532
     - make clean
     - make all
