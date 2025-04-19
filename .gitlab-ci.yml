@@ -1,9 +1,10 @@
 stages:
   - build
 
-build_cligen:
+build_linux_cligen:
   stage: build
   tags:
+    - forest-linux-shell-fortran
   script:
     - cd cligen532
     - make clean
