@@ -20,9 +20,8 @@ build_linux_windows:
   stage: build
   tags:
     - win11shed-windows-shell-fortran
-  before_script:
-    - call C:\Gitlab-Runner\set_env.bat
   script:
+    - pwsh -ExecutionPolicy Bypass -File C:\Gitlab-Runner\set_env.ps1
     - cd cligen532
     - make clean
     - make all
