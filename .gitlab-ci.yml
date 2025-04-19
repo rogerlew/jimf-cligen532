@@ -3,8 +3,11 @@ stages:
 
 build_cligen:
   stage: build
+  tags:
+    - shell
   script:
     - cd cligen532
+    - make clean
     - make all
   artifacts:
     paths:
