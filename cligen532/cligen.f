@@ -1,5 +1,11 @@
 c
 c
+c     Cligen version 5.323. 09/13/2025 Roger Lew / Gemini AI
+c        - Corrected a bug in observed climate file generation (-O option) that
+c          caused an extra day to be appended to the output. This occurred when
+c          the input .prn file contained a partial final year. The day_gen
+c          subroutine now properly handles the end-of-file condition.
+c
 c     Cligen version 5.322. 09/10/2024 Fred Fox
 c        - Corrected calculation of Coefficient of Variation so 
 c          a zero monthly average temperature does not cause a
@@ -609,7 +615,7 @@ c     + + + OUTPUT FORMATS + + +
  2080 format(/1x,'Do you want to continue (y/n)? ')
 c
 c     + + + END SPECIFICATIONS + + +
-      version=5.3220
+      version=5.3230
 c
 c *************************************************************
 c **************** BEGIN COMPILER-SPECIFIC CODE ***************
@@ -3029,6 +3035,10 @@ c     xmav        - ratio of (max rainfall intensity)/(avg rainfall intensity)
 c     r5p         - apparently: max rainfall intensity; peak rainfall rate 
 c                    (mm/h).  (Yu's r_p): instantaneous peak intensity (mm/h)
 c
+c     ***** FIX: Add a saved logical flag *****
+      logical q_gen_started
+      data q_gen_started/.false./
+      save q_gen_started
 c
 c     + + + SUBROUTINES CALLED + + +
 c     jlt
@@ -3060,14 +3070,15 @@ c      Start of the Daily Generation Loop  with nbt and ntd
           read(9,1000,end=199)irida,itmxg,itmng
           moveto = 0
  199      continue
-          if(moveto .eq. 0) then
+           if(moveto .eq. 0) then
+c             ***** FIX: Set flags when 9999 is detected *****
+            if(irida.eq.9999 .or. itmxg.eq.9999) q_gen_started = .true.
             if(irida.eq.9999) nsim=1
-            if(itmxg.eq.9999) msim=1
-            if(itmng.eq.9999) msim=1
+            if(itmxg.eq.9999 .or. itmng.eq.9999) msim=1
             r(ida)=irida*.01
             tmxg=itmxg
             tmng=itmng
-          endif
+           endif
         endif
 c ****** L1 IF ****
         if(moveto .eq. 0) then
@@ -3126,7 +3137,7 @@ c ******** L2 IF ****
             if(r(ida).gt.0.) then
 c             call alph
               call alphb
-              xr=r(ida)*25.4
+               xr=r(ida)*25.4
               tpr=timepk(timpkd,k10)
 C     tap4=z
               if(tpr.gt.0.99) tpr=0.99
@@ -3159,7 +3170,7 @@ c -------- Change for new option 4 and 7
 c
 c            Write WEPP Continuous Storm File
 c            Writes WEPP Single Storm when nbt=ndt
-            write(7,2000) jd,mo,iyear,xr,dur(mo,jd),tpr,
+             write(7,2000) jd,mo,iyear,xr,dur(mo,jd),tpr,
      1                 xmav,tmxg,tmng,radg(mo,jd),wv,th,tdp
 c ******** L2 ENDIF ****
           endif
@@ -3171,8 +3182,8 @@ c180  continue
 c
 c      End of Daily Loop
 c
-c
-      moveto = 0
+c      ***** FIX: Set stop signal if generation started this year *****
+      if(q_gen_started) moveto = 225
 c     
       return
       end
@@ -3689,7 +3700,7 @@ c
 c     Get Everything Ready to Start Generation by Options Selected
 c
  140    continue
-        do 150 i=1,12
+         do 150 i=1,12
           sumpp(i)=0.0
           sumptx(i)=0.0
           sumptm(i)=0.0
@@ -3724,7 +3735,7 @@ c  *   C. R. Meyer -- 7/30/2000                                 *
 c  **************************************************************
 c
 c  CALCULATE MONTHLY RAINFALL AMOUNTS
-            do 111 kkk = 1,12
+             do 111 kkk = 1,12
               xm = nc(kkk+1)-nc(kkk)
 c ---------- calculate number of days of rainfall in month
               smy(kkk) = xm*prw(kkk,2)/(1.-prw(kkk,1) + prw(kkk,2))
@@ -3742,7 +3753,7 @@ c ---------- Convert Observed Temps to degrees-C
         endif
   
         if(iopt.eq.4.or.iopt.eq.7) then
-          nt=0
+           nt=0
           if((iyear-iyear/400*400.eq.0).or.((iyear-iyear/4*4.eq.0)
      1       .and.(iyear-iyear/100*100.eq.0)))  nt=1
           ntd1 = jdt(nc,jd,mo,nt)
@@ -3754,6 +3765,8 @@ c      Generate Data by Number of Years and Option - MAIN LOOP
 c
         ii = 1
  160    continue
+c          write(*,*) 'wxr_gen: Loop start. ii=', ii, 
+c     1               ' iyear=', iyear
           moveto = 0
           ntd=365
           if((iopt.le.3.or.iopt.eq.5.or.iopt.eq.6) .and.
@@ -3772,6 +3785,10 @@ c
           call day_gen(nbt,jd,iyear,clt,tymax,timpkd,usdur,damt,ustpr,
      1                 uxmav,itype,ntd1,ntd,moveto)
 c
+c          ***** DEBUGGING LINE *****
+c          write(*,*) 'wxr_gen: Returned from day_gen for year', iyear
+c          write(*,*) '         moveto=', moveto, ' ii=', ii
+c
           if(moveto .ne. 225) then
 CC          call opt_calc(iyear,stidd,numyr,nstat,ii,sumpp,sumptx,
             call opt_calc(iyear,stidd,nstat,ii,sumpp,sumptx,
@@ -3782,7 +3799,10 @@ c
               ii = ii + 1
             endif
           endif
-        if((moveto.eq.0 .and. ii.le.numyr).or.(moveto.eq.160)) goto 160
+c
+c          ***** FORMATTING FIX *****
+          if((moveto.eq.0 .and. ii.le.numyr).or.
+     1       (moveto.eq.160)) goto 160
 c
       return
       end
