@@ -1,5 +1,10 @@
 c
 c
+c     Cligen version 5.322. 09/10/2024 Fred Fox
+c        - Corrected calculation of Coefficient of Variation so 
+c          a zero monthly average temperature does not cause a
+c          divide by zero. Merged change from WEPS version 5.3004 12/13/18
+c
 c     Cligen version 5.32.1  04/06/2022  Roger Lew
 c       - Fix for leap years to include years divisible by 400 but not
 c          divisible by 100
@@ -367,7 +372,9 @@ c          "g77_setup.bat"
 c          "g77 -o cligen cligen.f"
 c
 c --------------------------------------------------------------------------
-c
+
+      program cligen
+
 c     program Cligen. WEPP Water Erosion Project Durant, OK.  Version 5.1
 c     Please address inquiries to
 c
@@ -602,7 +609,7 @@ c     + + + OUTPUT FORMATS + + +
  2080 format(/1x,'Do you want to continue (y/n)? ')
 c
 c     + + + END SPECIFICATIONS + + +
-      version=5.3210
+      version=5.3220
 c
 c *************************************************************
 c **************** BEGIN COMPILER-SPECIFIC CODE ***************
@@ -759,7 +766,7 @@ c           write(*,*) 'CLIGEN - Climate Generator V-5.101 Feb. 2001'
 c           write(*,*) 'CLIGEN - Climate Generator V-5.102 Mar. 2001'
 c           write(*,*) 'CLIGEN - Climate Generator V-5.103 Apr. 2001'
             write(*,"('CLIGEN - Climate Generator V-', f7.5,
-     1                ' Jan. 2013')") version
+     1                ' Sep. 2024')") version
 
             write(*,*) 'Modified to support Command Line Options.'
             write(*,*)
@@ -2158,6 +2165,7 @@ c    1       2x,'*',66x,'*',/,2x,'*',27x,'VERSION ',f6.4,25x,'*',/,
      1       2x,'*',66x,'*',/,2x,'*',26x,'VERSION ',f7.5,25x,'*',/,
      2       2x,'*',21x,'Revised from VERSION 4.2',21x,'*',/,
 c    3       2x,'*',26x,' January 2013 ',26x,'*',/,2x,'*',66x,'*',/,
+     3       2x,'*',26x,'September 2024',26x,'*',/,2x,'*',66x,'*',/,
      4       2x,'*',11x,'(Use -h or /h to list command line options.)',
      5       11x,'*',/,2x,'*',66x,'*',/,2x,68('*'),//)
 c
@@ -2874,8 +2882,13 @@ c
       do 70 i=1,12
 c -- XXX -- Huh??? -- CRM -- 9/14/99
 c       wi(i)=wi(i)
-        cvtm(i)=stdtm(i)/obmn(i)
-        cvtx(i)=stdtx(i)/obmx(i) 
+c        cvtm(i)=stdtm(i)/obmn(i)
+c        cvtx(i)=stdtx(i)/obmx(i)
+c     This assumes that observed temperatures are Farenheit in the CLIGEN records.
+c     The monthly minimum is converted to Rankine for calculation of CV
+c     see https://en.wikipedia.org/wiki/Coefficient_of_variation#Examples_of_misuse
+        cvtm(i)=stdtm(i)/(obmn(i)+459.67)
+        cvtx(i)=stdtx(i)/(obmx(i)+459.67)          
         if(obsl(i).le.0.0) then
           cvs(i)=0.0
         else
