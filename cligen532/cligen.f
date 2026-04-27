@@ -938,7 +938,7 @@ c
 c    Check for Another Run or End
 c
 c **** P1 IF ****
-      if(moveto.ne.10 .and. moveto.ne.230) then
+      if(moveto.ne.10 .and. moveto.ne.230 .and. moveto.ne.225) then
 c ------ "Pure" Interactive Mode (No Command Line Arguments).
 c       if((istate.le.0 .or. index.le.0) .and. infile.eq."XXX") then
         if(numarg.eq.0) then
@@ -975,6 +975,7 @@ C           close (73)
 c **** P1 ENDIF ****
       endif
 c
+      if(moveto.eq.225 .and. iopt.ge.4) close (7)
       if(moveto.eq.10) goto 10
       stop 'Normal program termination' 
       end
@@ -3070,6 +3071,7 @@ c      Start of the Daily Generation Loop  with nbt and ntd
           read(9,1000,end=199)irida,itmxg,itmng
           moveto = 0
  199      continue
+          if(moveto .eq. 225) goto 181
            if(moveto .eq. 0) then
 c             ***** FIX: Set flags when 9999 is detected *****
             if(irida.eq.9999 .or. itmxg.eq.9999) q_gen_started = .true.
@@ -3179,6 +3181,7 @@ c ****** L1 ENDIF ****
 c180  continue
       ida=ida+1
       if(ida .le. ntd) goto 180
+ 181  continue
 c
 c      End of Daily Loop
 c
