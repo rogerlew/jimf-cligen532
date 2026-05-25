@@ -52,6 +52,16 @@ This version series has a few updates since CLIGEN 5.3:
 There are also a couple updates to CLIGEN from the Wind Erosion Research (WEPS) group at Fort Collins that have not been merged into this version.  
 When these updates are combined, the program will be available from the CLIGEN website.
 
+## `.cli` format/versioning guidance
+
+- Patch-level updates in the `5.3x` family (for example `5.30`, `5.323`) are
+  expected to remain format-compatible for generated climate files.
+- Any **format-breaking** change for CLIGEN-generated `.cli` files must bump
+  the **minor version** (for example `5.3 -> 5.4`), not only patch digits.
+- This convention preserves deterministic parser compatibility for downstream
+  scientific models (including openWEPP) that normalize/interpret CLIGEN
+  families by minor-version contract.
+
 ## Repo contains:
 
 - Prebuilt Windows Executable `cligen532.exe` (v 5.321)
